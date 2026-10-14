@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-14-rev723-v2",
+  "version": "2026-10-14-rev723-v3",
   "project": "photomode-low-quality",
   "scope": {
     "content_issue_count": 8,
@@ -189,7 +189,6 @@
       "enabled_when": "is_aigc_true",
       "definition": "Only a clear, localized AIGC hard defect: anatomically impossible body structure, impossible physical interaction, obvious object deformation, severe text or contour melting, material structural identity change across images, or a large and unmistakable product-reference mismatch.",
       "positive_signals": [
-        "unrealistic or exaggerated AIGC before/after with a clearly impossible claimed result",
         "anatomically impossible fingers, hands, arms, legs, face, body connection, or body structure",
         "impossible physical interaction such as floating, penetration, intersection, impossible attachment, or impossible person-product contact",
         "large and unmistakable product-reference mismatch in size, identity, structure, parts, or essential appearance",
