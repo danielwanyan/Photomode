@@ -1,0 +1,221 @@
+{
+  "version": "2026-10-14-rev723-v1",
+  "project": "photomode-low-quality",
+  "scope": {
+    "content_issue_count": 8,
+    "account_dimension_enabled": false,
+    "evidence_policy": "visible_image_evidence_only",
+    "precision_policy": "high_precision"
+  },
+  "action_mapping": {
+    "LOW_QUALITY": [
+      "pornographic_and_vulgar",
+      "disgusting_and_terrifying",
+      "irrelevant_promotion",
+      "misleading_function_and_effect",
+      "description_not_detailed",
+      "aigc_authenticity"
+    ],
+    "MONITOR_ONLY": [
+      "no_physical_product_display",
+      "only_marketing_sales_pitches"
+    ]
+  },
+  "global_policy": {
+    "multi_label": true,
+    "content_images_are_review_target": true,
+    "product_images_are_reference_only": true,
+    "monitor_only_does_not_make_problematic": true,
+    "partial_visibility_cannot_be_clean": true,
+    "not_visible_final_label_is_null": true,
+    "forbidden_inputs_as_evidence": [
+      "url_text",
+      "file_name",
+      "product_title",
+      "product_category",
+      "price",
+      "country",
+      "account_history"
+    ]
+  },
+  "positive_information_signals": [
+    "real use scene",
+    "human demonstration",
+    "multi-angle product display",
+    "review or usage experience",
+    "usage tutorial or step-by-step instructions",
+    "clear function or selling-point explanation",
+    "ingredient and effect explanation",
+    "bundle or included-item explanation"
+  ],
+  "issues": {
+    "pornographic_and_vulgar": {
+      "action": "LOW_QUALITY",
+      "enabled_when": "always",
+      "definition": "Clear sexual or vulgar visual/text, sexualized action/expression/composition, or product-wearing display with more than half of buttocks or breasts exposed.",
+      "positive_signals": [
+        "sexual-act implication or explicit sexual double meaning",
+        "sexualized crotch, kneeling, bed, banana, or similar composition",
+        "more than half buttocks or breasts exposed"
+      ],
+      "false_positive_boundaries": [
+        "normal model or apparel display",
+        "normal swimwear or underwear display without explicit sexualization",
+        "ordinary skin exposure",
+        "attractive model alone"
+      ],
+      "evidence_requirements": [
+        "at least one visible CONTENT image"
+      ]
+    },
+    "disgusting_and_terrifying": {
+      "action": "LOW_QUALITY",
+      "enabled_when": "always",
+      "definition": "Strong visible disgust, filth, bodily abnormality, waste, grotesque close-up, dense insects, sewer-like dirt, or terrifying imagery.",
+      "positive_signals": [
+        "severe decayed or dirty teeth close-up",
+        "wound or disturbing body close-up",
+        "excrement, visibly filthy liquid, dirty toilet, or sewer",
+        "dense insect or clear horror imagery",
+        "gross-out visual used in a cleaning-product demonstration"
+      ],
+      "false_positive_boundaries": [
+        "ordinary cleaning scene",
+        "mild dust or dirt",
+        "normal product-use process",
+        "merely unattractive visual"
+      ],
+      "evidence_requirements": [
+        "at least one visible CONTENT image",
+        "no audio evidence"
+      ]
+    },
+    "irrelevant_promotion": {
+      "action": "LOW_QUALITY",
+      "enabled_when": "product_reference_available",
+      "definition": "CONTENT_1 visual or text hook is clearly completely unrelated to all visible bound-product references.",
+      "positive_signals": [
+        "unrelated meme, body-part, or lifestyle hook followed by an unrelated product"
+      ],
+      "false_positive_boundaries": [
+        "relevant seasonal, use-scene, or outfit hook followed by the related product",
+        "reasonable creative transition",
+        "first image mainly emphasizes price or promotion; route to marketing monitor instead"
+      ],
+      "evidence_requirements": [
+        "CONTENT_1 visible",
+        "at least one visible PRODUCT image"
+      ]
+    },
+    "misleading_function_and_effect": {
+      "action": "LOW_QUALITY",
+      "enabled_when": "always_with_reference_gate_for_function_mismatch",
+      "definition": "Clearly exaggerated product effect through instant-result claims, extreme before/after difference, or unsupported function mismatch.",
+      "positive_signals": [
+        "large result claimed in an extremely short time",
+        "before and after difference is extremely large and implausible",
+        "product function is A but content advertises unsupported function B"
+      ],
+      "false_positive_boundaries": [
+        "ordinary advertising language",
+        "normal effect demonstration",
+        "reasonable retouching",
+        "time span cannot be established",
+        "subjective experience without clear exaggeration"
+      ],
+      "evidence_requirements": [
+        "at least one visible CONTENT image",
+        "function mismatch requires visible PRODUCT or packaging/internal evidence"
+      ]
+    },
+    "no_physical_product_display": {
+      "action": "MONITOR_ONLY",
+      "enabled_when": "product_reference_available_and_all_content_visible",
+      "definition": "Content is product-related but all CONTENT images omit the recognizable physical product and show only effects, selfies, animation, virtual imagery, illustration, meme, or imagined use.",
+      "positive_signals": [
+        "camera promotion shows only captured effects or selfies without the camera",
+        "massage-device promotion shows only illustration or imagined use without the device"
+      ],
+      "false_positive_boundaries": [
+        "any CONTENT image clearly shows the real physical product"
+      ],
+      "evidence_requirements": [
+        "all CONTENT images visible",
+        "at least one visible PRODUCT image"
+      ]
+    },
+    "only_marketing_sales_pitches": {
+      "action": "MONITOR_ONLY",
+      "enabled_when": "all_content_visible",
+      "definition": "All content is dominated by price, discount, BOGO, gifts, free, countdown, urgency, or haul prompts without substantive product information.",
+      "positive_signals": [
+        "buy one get one free or free-gift message dominates",
+        "price or urgency is the only meaningful message",
+        "isolated packshot or color lineup without function, use, material, effect, tutorial, or experience"
+      ],
+      "false_positive_boundaries": [
+        "clear function explanation",
+        "usage tutorial",
+        "real experience",
+        "ingredient or effect explanation",
+        "complete selling-point or bundle information"
+      ],
+      "evidence_requirements": [
+        "all CONTENT images visible"
+      ]
+    },
+    "description_not_detailed": {
+      "action": "LOW_QUALITY",
+      "enabled_when": "all_content_visible",
+      "definition": "Product information is clearly insufficient under the product-type boundary.",
+      "positive_signals": [
+        "supplement only shows package, product name, vague slogan, or unclear claim without understandable effect, ingredient, or usage explanation",
+        "all images are rough white-background or PDP-like isolated product images with no useful text, function, use, material, or scene"
+      ],
+      "false_positive_boundaries": [
+        "ordinary product is completely, clearly, and recognizably displayed",
+        "multi-angle display",
+        "real use scene or human demonstration",
+        "review, tutorial, function, ingredient/effect, or bundle information"
+      ],
+      "evidence_requirements": [
+        "all CONTENT images visible",
+        "do not use title or category as evidence"
+      ]
+    },
+    "aigc_authenticity": {
+      "action": "LOW_QUALITY",
+      "enabled_when": "is_aigc_true",
+      "definition": "Clear AIGC fake exaggeration, commonsense or physical violation, rendering artifact, cross-image instability, or visible product-detail mismatch.",
+      "positive_signals": [
+        "unrealistic or exaggerated AIGC before/after",
+        "person-product interaction violates commonsense",
+        "floating, intersection, penetration, abnormal fingers/limbs, or impossible structure",
+        "product size, style, part, or detail visibly differs from PRODUCT reference",
+        "text, contour, color, structure, or part changes across images",
+        "blurred changing text, melting edge, or deformed object contour"
+      ],
+      "false_positive_boundaries": [
+        "normal creative design",
+        "reasonable visual effect",
+        "artistic background",
+        "ordinary retouching",
+        "minor lighting difference",
+        "weak or ambiguous anomaly"
+      ],
+      "evidence_requirements": [
+        "is_aigc must equal 1",
+        "at least one visible CONTENT image",
+        "reference mismatch requires visible PRODUCT evidence"
+      ]
+    }
+  },
+  "output_policy": {
+    "issue_types_contains_all_detected": true,
+    "low_quality_issue_types_contains_only_low_quality": true,
+    "monitoring_issue_types_contains_only_monitor_only": true,
+    "final_label_problematic_when": "low_quality_issue_types is non-empty",
+    "final_label_clean_when": "all content visible and low_quality_issue_types is empty",
+    "final_label_null_when": "content not visible or partial content has no positive low-quality evidence"
+  }
+}
