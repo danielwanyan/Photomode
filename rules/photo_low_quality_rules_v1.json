@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-14-rev723-v1",
+  "version": "2026-10-14-rev723-v2",
   "project": "photomode-low-quality",
   "scope": {
     "content_issue_count": 8,
@@ -28,6 +28,7 @@
     "monitor_only_does_not_make_problematic": true,
     "partial_visibility_cannot_be_clean": true,
     "not_visible_final_label_is_null": true,
+    "is_aigc_is_enablement_only": true,
     "forbidden_inputs_as_evidence": [
       "url_text",
       "file_name",
@@ -186,27 +187,29 @@
     "aigc_authenticity": {
       "action": "LOW_QUALITY",
       "enabled_when": "is_aigc_true",
-      "definition": "Clear AIGC fake exaggeration, commonsense or physical violation, rendering artifact, cross-image instability, or visible product-detail mismatch.",
+      "definition": "Only a clear, localized AIGC hard defect: anatomically impossible body structure, impossible physical interaction, obvious object deformation, severe text or contour melting, material structural identity change across images, or a large and unmistakable product-reference mismatch.",
       "positive_signals": [
-        "unrealistic or exaggerated AIGC before/after",
-        "person-product interaction violates commonsense",
-        "floating, intersection, penetration, abnormal fingers/limbs, or impossible structure",
-        "product size, style, part, or detail visibly differs from PRODUCT reference",
-        "text, contour, color, structure, or part changes across images",
-        "blurred changing text, melting edge, or deformed object contour"
+        "unrealistic or exaggerated AIGC before/after with a clearly impossible claimed result",
+        "anatomically impossible fingers, hands, arms, legs, face, body connection, or body structure",
+        "impossible physical interaction such as floating, penetration, intersection, impossible attachment, or impossible person-product contact",
+        "large and unmistakable product-reference mismatch in size, identity, structure, parts, or essential appearance",
+        "material structural identity change across images for the same person, object, text, or product",
+        "severe text or contour melting, fused parts, or obviously deformed object structure"
       ],
       "false_positive_boundaries": [
-        "normal creative design",
-        "reasonable visual effect",
-        "artistic background",
-        "ordinary retouching",
-        "minor lighting difference",
-        "weak or ambiguous anomaly"
+        "AI-like appearance or a general impression that the image was generated",
+        "smooth skin, beauty retouching, polished commercial rendering, or illustration-like style",
+        "normal creative design, reasonable visual effect, or artistic background",
+        "general style variation across images without a material structural identity change",
+        "ordinary retouching, minor lighting, saturation, angle, composition, or background difference",
+        "minor blur, edge softness, weak or ambiguous anomaly, or vague unnaturalness without a localized hard defect"
       ],
       "evidence_requirements": [
-        "is_aigc must equal 1",
+        "is_aigc=1 is an enablement gate only and is never visual evidence or a reason to lower the threshold",
         "at least one visible CONTENT image",
-        "reference mismatch requires visible PRODUCT evidence"
+        "name the exact visible body part, object, text, contour, or product detail and describe the localized hard defect",
+        "reference mismatch requires visible CONTENT and PRODUCT evidence and the difference must be large and unmistakable",
+        "if the evidence can only be described as AI-like, smooth, rendered, stylized, inconsistent in style, or unnatural, do not hit"
       ]
     }
   },
