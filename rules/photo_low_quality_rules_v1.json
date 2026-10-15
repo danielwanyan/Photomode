@@ -1,8 +1,8 @@
 {
-  "version": "2026-10-14-rev723-v3",
+  "version": "2026-10-15-rev723-v4",
   "project": "photomode-low-quality",
   "scope": {
-    "content_issue_count": 8,
+    "content_issue_count": 9,
     "account_dimension_enabled": false,
     "evidence_policy": "visible_image_evidence_only",
     "precision_policy": "high_precision"
@@ -12,6 +12,7 @@
       "pornographic_and_vulgar",
       "disgusting_and_terrifying",
       "irrelevant_promotion",
+      "content_product_mismatch",
       "misleading_function_and_effect",
       "description_not_detailed",
       "aigc_authenticity"
@@ -53,17 +54,16 @@
     "pornographic_and_vulgar": {
       "action": "LOW_QUALITY",
       "enabled_when": "always",
-      "definition": "Clear sexual or vulgar visual/text, sexualized action/expression/composition, or product-wearing display with more than half of buttocks or breasts exposed.",
+      "definition": "Explicit sexual behavior or meaning, or the reviewed strict exposure boundary of more than half of breasts or buttocks visibly exposed.",
       "positive_signals": [
-        "sexual-act implication or explicit sexual double meaning",
-        "sexualized crotch, kneeling, bed, banana, or similar composition",
-        "more than half buttocks or breasts exposed"
+        "explicit sexual behavior, sexual act implication, or explicit sexual meaning",
+        "more than half of breasts or buttocks visibly exposed"
       ],
       "false_positive_boundaries": [
-        "normal model or apparel display",
-        "normal swimwear or underwear display without explicit sexualization",
-        "ordinary skin exposure",
-        "attractive model alone"
+        "romantic intimacy, affectionate behavior, or affectionate or obsession perfume copy without an explicit sexual cue",
+        "ordinary lingerie, lace, fitness wear, back exposure, legs, body curves, or attractive posing without an explicit sexual cue",
+        "clothing transparency or a sexualized impression alone is insufficient",
+        "normal model, apparel, swimwear, or underwear display without explicit sexual behavior or meaning"
       ],
       "evidence_requirements": [
         "at least one visible CONTENT image"
@@ -94,51 +94,81 @@
     "irrelevant_promotion": {
       "action": "LOW_QUALITY",
       "enabled_when": "product_reference_available",
-      "definition": "CONTENT_1 visual or text hook is clearly completely unrelated to all visible bound-product references.",
+      "definition": "CONTENT_1 is clearly and completely unrelated to the promoted product after considering both visible visual and text evidence.",
       "positive_signals": [
-        "unrelated meme, body-part, or lifestyle hook followed by an unrelated product"
+        "an unrelated meme, chat screenshot, emotional or lifestyle scene, person image, landscape, or narrative setup leads into a completely unrelated product promotion"
       ],
       "false_positive_boundaries": [
-        "relevant seasonal, use-scene, or outfit hook followed by the related product",
-        "reasonable creative transition",
-        "first image mainly emphasizes price or promotion; route to marketing monitor instead"
+        "any visible product or relevant use scene blocks the hit",
+        "a matching motif, direct product discussion, or any reasonable semantic bridge blocks the hit",
+        "do not hit merely because CONTENT_1 is creative, narrative, lifestyle oriented, or does not show a packshot"
       ],
       "evidence_requirements": [
         "CONTENT_1 visible",
-        "at least one visible PRODUCT image"
+        "at least one visible PRODUCT image",
+        "consider both visual and text evidence before declaring complete irrelevance"
+      ]
+    },
+    "content_product_mismatch": {
+      "action": "LOW_QUALITY",
+      "enabled_when": "content_and_product_reference_available",
+      "definition": "A clear core contradiction between the promoted CONTENT and bound PRODUCT references that changes what the buyer expects to receive or experience.",
+      "positive_signals": [
+        "physical product identity or core category conflict",
+        "primary function or sellable mechanism conflict",
+        "product form, included components, or visible quantity conflict",
+        "material size, dimension, capacity, or key specification conflict",
+        "promised use or core visual effect conflict",
+        "material brand or product line identity conflict when it defines buyer expectation"
+      ],
+      "false_positive_boundaries": [
+        "color only differences",
+        "minor style, texture, material, or accessory differences",
+        "lighting, angle, crop, composition, or background differences",
+        "packaging language or incidental brand text",
+        "a brief prop or opening element",
+        "different variants that remain compatible with the sold set",
+        "weak, ambiguous, or partially hidden comparisons"
+      ],
+      "evidence_requirements": [
+        "at least one visible CONTENT evidence item",
+        "at least one visible PRODUCT evidence item",
+        "name the core difference dimension",
+        "explain why the difference changes buyer expectation"
       ]
     },
     "misleading_function_and_effect": {
       "action": "LOW_QUALITY",
       "enabled_when": "always_with_reference_gate_for_function_mismatch",
-      "definition": "Clearly exaggerated product effect through instant-result claims, extreme before/after difference, or unsupported function mismatch.",
+      "definition": "A concrete claim or visual demonstration in CONTENT presents a clearly false, exaggerated, or unsupported function or result.",
       "positive_signals": [
-        "large result claimed in an extremely short time",
-        "before and after difference is extremely large and implausible",
-        "product function is A but content advertises unsupported function B"
+        "large concrete result claimed in an extremely short time",
+        "before and after frames show an implausible claimed result while surrounding pixels remain materially identical",
+        "CONTENT demonstrates a concrete function contradicted by visible reference or packaging evidence"
       ],
       "false_positive_boundaries": [
-        "ordinary advertising language",
-        "normal effect demonstration",
-        "reasonable retouching",
-        "time span cannot be established",
-        "subjective experience without clear exaggeration"
+        "PRODUCT images alone cannot independently trigger this issue",
+        "ordinary advertising tone or subjective praise",
+        "absolute sounding copy without a concrete false result",
+        "claims compatible with the product",
+        "normal effect demonstration, reasonable retouching, or a time span that cannot be established"
       ],
       "evidence_requirements": [
-        "at least one visible CONTENT image",
-        "function mismatch requires visible PRODUCT or packaging/internal evidence"
+        "at least one visible CONTENT image containing the concrete claim or visual demonstration",
+        "PRODUCT images are auxiliary comparison evidence only"
       ]
     },
     "no_physical_product_display": {
       "action": "MONITOR_ONLY",
       "enabled_when": "product_reference_available_and_all_content_visible",
-      "definition": "Content is product-related but all CONTENT images omit the recognizable physical product and show only effects, selfies, animation, virtual imagery, illustration, meme, or imagined use.",
+      "definition": "After inspecting every CONTENT image, no recognizable physical product or real product use is shown.",
       "positive_signals": [
         "camera promotion shows only captured effects or selfies without the camera",
         "massage-device promotion shows only illustration or imagined use without the device"
       ],
       "false_positive_boundaries": [
-        "any CONTENT image clearly shows the real physical product"
+        "any CONTENT image with packaging, wearing, holding, installation, operation, application, illuminated or in use display counts as physical display",
+        "a small but recognizable physical product in any CONTENT image blocks the hit"
       ],
       "evidence_requirements": [
         "all CONTENT images visible",
@@ -148,18 +178,15 @@
     "only_marketing_sales_pitches": {
       "action": "MONITOR_ONLY",
       "enabled_when": "all_content_visible",
-      "definition": "All content is dominated by price, discount, BOGO, gifts, free, countdown, urgency, or haul prompts without substantive product information.",
+      "definition": "Nearly all meaningful content is price, discount, urgency, stock, gifting, or purchase pressure with no substantive product information.",
       "positive_signals": [
         "buy one get one free or free-gift message dominates",
-        "price or urgency is the only meaningful message",
-        "isolated packshot or color lineup without function, use, material, effect, tutorial, or experience"
+        "price, discount, urgency, stock, gifting, or purchase pressure is nearly all meaningful content"
       ],
       "false_positive_boundaries": [
-        "clear function explanation",
-        "usage tutorial",
-        "real experience",
-        "ingredient or effect explanation",
-        "complete selling-point or bundle information"
+        "any real function, material, size, compatibility, use, operation, or scenario information blocks the hit",
+        "bundle content or substantive visual demonstration blocks the hit",
+        "ordinary advertising copy does not outweigh substantive product information"
       ],
       "evidence_requirements": [
         "all CONTENT images visible"
@@ -168,37 +195,38 @@
     "description_not_detailed": {
       "action": "LOW_QUALITY",
       "enabled_when": "all_content_visible",
-      "definition": "Product information is clearly insufficient under the product-type boundary.",
+      "definition": "An ordinary product passes when it is clearly, completely, and recognizably displayed; only a visibly established supplement or health product may require understandable effect, ingredient, or usage explanation.",
       "positive_signals": [
-        "supplement only shows package, product name, vague slogan, or unclear claim without understandable effect, ingredient, or usage explanation",
-        "all images are rough white-background or PDP-like isolated product images with no useful text, function, use, material, or scene"
+        "visible CONTENT establishes a supplement or health product, but shows only a package, name, or slogan with no understandable effect, ingredient, or usage explanation"
       ],
       "false_positive_boundaries": [
-        "ordinary product is completely, clearly, and recognizably displayed",
-        "multi-angle display",
-        "real use scene or human demonstration",
-        "review, tutorial, function, ingredient/effect, or bundle information"
+        "an ordinary product that is clearly, completely, and recognizably displayed does not need extra material, size, fit, mechanism, or prose",
+        "an isolated packshot or PDP-like image alone is not a hit for an ordinary product",
+        "multi-angle display, real use scene, human demonstration, review, tutorial, function, ingredient, effect, or bundle information"
       ],
       "evidence_requirements": [
-        "all CONTENT images visible",
-        "do not use title or category as evidence"
+        "all visible CONTENT images establish whether the item is a supplement or health product",
+        "do not infer product type from product title, category, country, or other forbidden inputs"
       ]
     },
     "aigc_authenticity": {
       "action": "LOW_QUALITY",
       "enabled_when": "is_aigc_true",
-      "definition": "Only a clear, localized AIGC hard defect: anatomically impossible body structure, impossible physical interaction, obvious object deformation, severe text or contour melting, material structural identity change across images, or a large and unmistakable product-reference mismatch.",
+      "definition": "Only a clear, localized AIGC-caused physical or structural defect in CONTENT.",
       "positive_signals": [
-        "anatomically impossible fingers, hands, arms, legs, face, body connection, or body structure",
-        "impossible physical interaction such as floating, penetration, intersection, impossible attachment, or impossible person-product contact",
-        "large and unmistakable product-reference mismatch in size, identity, structure, parts, or essential appearance",
-        "material structural identity change across images for the same person, object, text, or product",
-        "severe text or contour melting, fused parts, or obviously deformed object structure"
+        "anatomically impossible body structure, extra digits, missing digits, or impossible joints",
+        "fused limbs or impossible body connections",
+        "impossible physical interaction such as object penetration, floating, intersection, or impossible attachment",
+        "material structural identity change across images for the same visible person, object, or text",
+        "severe text or contour melting or obviously deformed object structure"
       ],
       "false_positive_boundaries": [
         "AI-like appearance or a general impression that the image was generated",
         "smooth skin, beauty retouching, polished commercial rendering, or illustration-like style",
-        "normal creative design, reasonable visual effect, or artistic background",
+        "emoji, UI icon overlays, garment prints, stylized art, or other normal creative design",
+        "fantasy backgrounds or ordinary effect reinforcement",
+        "soft edges or unclear hand contours without a localized hard defect",
+        "minor appearance differences",
         "general style variation across images without a material structural identity change",
         "ordinary retouching, minor lighting, saturation, angle, composition, or background difference",
         "minor blur, edge softness, weak or ambiguous anomaly, or vague unnaturalness without a localized hard defect"
@@ -206,8 +234,7 @@
       "evidence_requirements": [
         "is_aigc=1 is an enablement gate only and is never visual evidence or a reason to lower the threshold",
         "at least one visible CONTENT image",
-        "name the exact visible body part, object, text, contour, or product detail and describe the localized hard defect",
-        "reference mismatch requires visible CONTENT and PRODUCT evidence and the difference must be large and unmistakable",
+        "name the exact visible body part, object, text, or contour and describe the localized physical or structural defect",
         "if the evidence can only be described as AI-like, smooth, rendered, stylized, inconsistent in style, or unnatural, do not hit"
       ]
     }
@@ -216,8 +243,8 @@
     "issue_types_contains_all_detected": true,
     "low_quality_issue_types_contains_only_low_quality": true,
     "monitoring_issue_types_contains_only_monitor_only": true,
-    "final_label_problematic_when": "low_quality_issue_types is non-empty",
-    "final_label_clean_when": "all content visible and low_quality_issue_types is empty",
-    "final_label_null_when": "content not visible or partial content has no positive low-quality evidence"
+    "final_label_problematic_when": "ANALYZED has non-empty low_quality_issue_types, or PARTIAL_ANALYSIS has a supported LOW_QUALITY hit",
+    "final_label_clean_when": "ANALYZED has empty low_quality_issue_types, including monitor-only hits",
+    "final_label_null_when": "PARTIAL_ANALYSIS has no supported LOW_QUALITY hit or status is CONTENT_NOT_ANALYZABLE; use JSON null, never the string null"
   }
 }
